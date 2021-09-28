@@ -1,5 +1,5 @@
 # GitTheJob
-In order to run jokeme.ksh, you will need to have the Korn shell installed.  If /bin/ksh is NOT where Korn shell is located on your server, you will need to either:
+In order to run jokeme.ksh, you will need to have Korn shell installed.  If /bin/ksh is NOT where Korn shell is located on your server, you will need to either:
  1. create a link /bin/ksh to it's actual location
  2. Update the header of the jokeme.ksh to reference python's actual location.
 
