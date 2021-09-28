@@ -1,12 +1,37 @@
 #!/bin/ksh
 #set -x
+#############################################################################
+# UNLicensed Materials - Property of No One.
+#
+#
+# (UC) UNCopyright No One 2021   No Rights Reserved
+#############################################################################
+#############################################################################
+# jokeme.ksh    28 Sep 2021     James Allen Council (JAC)
+#
+# Version 1.0
+#
+# Description:
+#   This script is used to grab specific jokes from a dad joke site.
+#
+#############################################################################
+#############################################################################
+# Modification Information:
+#   09/28/2021  JAC Initial Release
+#############################################################################
 
+#############
+# VARIABLES #
+#############
 INPUTD=$(echo `dirname $0`"/../input")
 INPUTF=dadjokes_ids.txt
 INPUT=$INPUTD/$INPUTF
 HEAD="User-Agent : MyLibrary (https://github.com/JamesCouncilTN/GitTheJob) text/plain"
 BIN="curl -H \"$HEAD\" https://icanhazdadjoke.com/j"
 
+#############################################
+# Start
+#############################################
 clear
 for ID in `cat $INPUT`
 do
@@ -18,3 +43,6 @@ do
  fi
  echo -e "<$ID> : $JOKE"
 done
+#############################################
+# Finish
+#############################################
