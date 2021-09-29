@@ -15,20 +15,24 @@
 #
 # Requirements:
 #	/usr/bin/python3 -m pip install requests
+#	/usr/bin/python3 -m pip install ratelimiter
 #
 #############################################################################
 #############################################################################
 # Modification Information:
 #   09/28/2021  JAC Initial Release
 #   09/29/2021  JAC Switched from curl to requests for http calls.
+#               JAC Added a ratelimiter.
 #############################################################################
 
 import subprocess, os, sys, requests
 from os import system, name 
+from ratelimiter import RateLimiter
 
 #############
 # VARIABLES #
 #############
+rate_limiter = RateLimiter(max_calls=100, period=1)
 RUND = os.path.dirname(__file__)
 INPUTD = RUND + '/../input'
 INPUTF = "dadjokes_ids.txt"
@@ -52,16 +56,17 @@ def clearScreen():
 clearScreen()
 infile = open(INPUT, 'r')
 IDS = list(infile)
-for id in IDS:
- ID = id.strip()
- URL = url + '/' + ID
- rep = requests.get(URL, headers=HEAD)
- Joke = rep.text
- if sub in Joke:
-  JOKE = "[Dad joke not found]"
- else:
-  JOKE = "<" + Joke + ">"
- print("<" + ID + ">" + " : " + JOKE)
+with rate_limiter:
+ for id in IDS:
+  ID = id.strip()
+  URL = url + '/' + ID
+  rep = requests.get(URL, headers=HEAD)
+  Joke = rep.text
+  if sub in Joke:
+   JOKE = "[Dad joke not found]"
+  else:
+   JOKE = "<" + Joke + ">"
+  print("<" + ID + ">" + " : " + JOKE)
 #############################################
 # Finish
 #############################################
