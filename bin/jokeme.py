@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #############################################################################
 # UNLicensed Materials - Property of No One.
 #
@@ -13,13 +13,17 @@
 # Description:
 #   This script is used to grab specific jokes from a dad joke site.
 #
+# Requirements:
+#	/usr/bin/python3 -m pip install requests
+#
 #############################################################################
 #############################################################################
 # Modification Information:
 #   09/28/2021  JAC Initial Release
+#   09/29/2021  JAC Switched from curl to requests for http calls.
 #############################################################################
 
-import subprocess, os, sys
+import subprocess, os, sys, requests
 from os import system, name 
 
 #############
@@ -29,9 +33,9 @@ RUND = os.path.dirname(__file__)
 INPUTD = RUND + '/../input'
 INPUTF = "dadjokes_ids.txt"
 INPUT = INPUTD + '/' + INPUTF
-HEAD = "\"User-Agent : MyLibrary (https://github.com/JamesCouncilTN/GitTheJob) text/plain\""
-BIN = "/usr/bin/curl -sH " + HEAD + " https://icanhazdadjoke.com/j"
 sub = "not found"
+url = 'https://icanhazdadjoke.com/j'
+HEAD = {'User-Agent':'MyLibrary (https://github.com/JamesCouncilTN/GitTheJob)' ,  'Accept':'text/plain'}
 
 #############
 # FUNCTIONS #
@@ -50,9 +54,9 @@ infile = open(INPUT, 'r')
 IDS = list(infile)
 for id in IDS:
  ID = id.strip()
- GET = BIN + '/' + ID + ' 2>/dev/null'
- joke = os.popen(GET)
- Joke = joke.read()
+ URL = url + '/' + ID
+ rep = requests.get(URL, headers=HEAD)
+ Joke = rep.text
  if sub in Joke:
   JOKE = "[Dad joke not found]"
  else:
