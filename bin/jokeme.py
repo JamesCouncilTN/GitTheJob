@@ -32,7 +32,6 @@ from ratelimiter import RateLimiter
 #############
 # VARIABLES #
 #############
-rate_limiter = RateLimiter(max_calls=100, period=1)
 RUND = os.path.dirname(__file__)
 INPUTD = RUND + '/../input'
 INPUTF = "dadjokes_ids.txt"
