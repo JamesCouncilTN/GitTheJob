@@ -41,6 +41,14 @@ SEC=60
 #
 Count (){
 let COUNT=$COUNT+1
+if [ $COUNT -ge $RATE ] && [ $DIFF -le $SEC ] ; then
+ let SLEEP=$SEC-$DIFF
+ echo -e "\t[-] Maximum API rate of $RATE in $SEC seonds hit. Sleeping for $SLEEP seconds."
+ sleep $SLEEP
+elif [ $COUNT -ge $RATE ] && [ $DIFF -gt $SEC ] ; then
+ COUNT=0
+ START=$(date "+%s")
+fi
 }
 
 #----------------------------------------------------------------------------
@@ -68,14 +76,6 @@ do
  NOW=$(date "+%s")
  let DIFF=$NOW-$START
  Count
- if [ $COUNT -ge $RATE ] && [ $DIFF -le $SEC ] ; then
-  let SLEEP=$SEC-$DIFF
-  echo -e "\t[-] Maximum API rate of $RATE in $SEC seonds hit. Sleeping for $SLEEP seconds."
-  sleep $SLEEP
- elif [ $COUNT -ge $RATE ] && [ $DIFF -gt $SEC ] ; then
-  COUNT=0
-  START=$(date "+%s")
- fi
  Get_Joke
 done
 #############################################
