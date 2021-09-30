@@ -53,7 +53,7 @@ if echo $joke | grep -q "not found"; then
 else
  JOKE="<$joke>"
 fi
-echo -e "<$ID> : $JOKE"
+echo -e "<$ID>\t: $JOKE"
 }
 
 #############################################
@@ -63,7 +63,7 @@ clear
 START=$(date "+%s")
 COUNT=0
 
-for ID in `cat $INPUT`
+for ID in `cat $INPUT|xargs`
 do
  NOW=$(date "+%s")
  let DIFF=$NOW-$START
