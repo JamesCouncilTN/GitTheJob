@@ -25,7 +25,7 @@
 #               JAC Added a ratelimiter.
 #############################################################################
 
-import subprocess, os, sys, requests
+import subprocess, os, sys, requests, time
 from os import system, name 
 from ratelimiter import RateLimiter
 
@@ -44,20 +44,32 @@ HEAD = {'User-Agent':'MyLibrary (https://github.com/JamesCouncilTN/GitTheJob)' ,
 #############
 # FUNCTIONS #
 #############
+#------------------------------------------------------
+# Function to clear the screen.
+#
 def clearScreen(): 
  if name == 'nt': 
   _ = system('cls') 
  else: 
   _ = system('clear') 
 
+#------------------------------------------------------
+# Function to pause the API calls to a defined maximum.
+#
+def limited(until):
+ duration = int(round(until - time.time()))
+ print('Rate limited, sleeping for {:d} seconds'.format(duration))
+
 #############################################
 # Start
 #############################################
+rate_limiter = RateLimiter(max_calls=100, period=60, callback=limited)
+
 clearScreen()
 infile = open(INPUT, 'r')
 IDS = list(infile)
-with rate_limiter:
- for id in IDS:
+for id in IDS:
+ with rate_limiter:
   ID = id.strip()
   URL = url + '/' + ID
   rep = requests.get(URL, headers=HEAD)
