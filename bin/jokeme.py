@@ -25,7 +25,7 @@
 #               JAC Added a ratelimiter.
 #############################################################################
 
-import subprocess, os, sys, requests, time
+import os, sys, requests, time
 from os import system, name 
 from ratelimiter import RateLimiter
 
