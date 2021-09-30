@@ -15,8 +15,7 @@
 #
 # Requirements:
 #	/usr/bin/python3 -m pip install requests
-#	/usr/bin/python3 -m pip install ratelimit
-#	/usr/bin/python3 -m pip install backoff
+#	/usr/bin/python3 -m pip install ratelimiter
 #
 #############################################################################
 #############################################################################
@@ -24,14 +23,11 @@
 #   09/28/2021  JAC Initial Release
 #   09/29/2021  JAC Switched from curl to requests for http calls.
 #               JAC Added a ratelimiter.
-#   09/30/2021  JAC Switched from ratelimiter to ratelimit.
-#               JAC Added backoff.
 #############################################################################
 
 import os, sys, requests, time
 from os import system, name 
-from ratelimit import limits, RateLimitException, sleep_and_retry
-from backoff import on_exception, expo
+from ratelimiter import RateLimiter
 
 #############
 # VARIABLES #
@@ -43,8 +39,6 @@ INPUT = INPUTD + '/' + INPUTF
 sub = "not found"
 url = 'https://icanhazdadjoke.com/j'
 HEAD = {'User-Agent':'MyLibrary (https://github.com/JamesCouncilTN/GitTheJob)' ,  'Accept':'text/plain'}
-ONE_MINUTE = 60
-MAX_CALLS_PER_MINUTE = 100
 
 #############
 # FUNCTIONS #
@@ -59,31 +53,31 @@ def clearScreen():
   _ = system('clear') 
 
 #------------------------------------------------------
-# Function to get jokes and pause the API calls to a
-#	defined maximum.
+# Function to pause the API calls to a defined maximum.
 #
-#@sleep_and_retry
-@on_exception(expo, RateLimitException, max_tries=8)
-@limits(calls=MAX_CALLS_PER_MINUTE, period=ONE_MINUTE)
-def getjoke():
- rep = requests.get(URL, headers=HEAD)
- Joke = rep.text
- if sub in Joke:
-  JOKE = "[Dad joke not found]"
- else:
-  JOKE = "<" + Joke + ">"
- print("<" + ID + ">" + " : " + JOKE)
+def limited(until):
+ duration = int(round(until - time.time()))
+ print('Rate limited, sleeping for {:d} seconds'.format(duration))
 
 #############################################
 # Start
 #############################################
+rate_limiter = RateLimiter(max_calls=100, period=60, callback=limited)
+
 clearScreen()
 infile = open(INPUT, 'r')
 IDS = list(infile)
 for id in IDS:
- ID = id.strip()
- URL = url + '/' + ID
- getjoke()
+ with rate_limiter:
+  ID = id.strip()
+  URL = url + '/' + ID
+  rep = requests.get(URL, headers=HEAD)
+  Joke = rep.text
+  if sub in Joke:
+   JOKE = "[Dad joke not found]"
+  else:
+   JOKE = "<" + Joke + ">"
+  print("<" + ID + ">" + " : " + JOKE)
 #############################################
 # Finish
 #############################################
